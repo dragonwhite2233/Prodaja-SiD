@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Kalorijski kalkulator</title>
+
   <style>
     * {
       box-sizing: border-box;
@@ -12,23 +13,40 @@
     body {
       margin: 0;
       min-height: 100vh;
-      background: linear-gradient(135deg, #43cea2, #185a9d);
+      background-image: url("images/bg.jpg");
+      background-size: cover;
+      background-position: center;
       display: flex;
       justify-content: center;
       align-items: center;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: -1;
     }
 
     .card {
-      background: #ffffff;
-      width: 360px;
+      background: rgba(255,255,255,0.95);
+      width: 380px;
       padding: 25px;
-      border-radius: 16px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .logo {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
     .logo span {
@@ -42,15 +60,21 @@
     }
 
     .logo h1 {
-      margin: 8px 0 0;
-      font-size: 20px;
+      margin: 10px 0 0;
+      font-size: 22px;
       color: #333;
+    }
+
+    .hero {
+      width: 100%;
+      margin: 12px 0 15px;
+      border-radius: 12px;
     }
 
     label {
       font-size: 14px;
       color: #555;
-      margin-top: 12px;
+      margin-top: 10px;
       display: block;
     }
 
@@ -68,11 +92,12 @@
       margin-top: 18px;
       padding: 12px;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       background: #185a9d;
       color: white;
       font-size: 16px;
       cursor: pointer;
+      transition: background 0.3s;
     }
 
     button:hover {
@@ -86,6 +111,7 @@
       border-radius: 10px;
       font-size: 14px;
       white-space: pre-line;
+      animation: fadeIn 0.4s ease;
     }
 
     .footer {
@@ -96,6 +122,7 @@
     }
   </style>
 </head>
+
 <body>
 
 <div class="card">
@@ -103,6 +130,8 @@
     <span>🔥</span>
     <h1>Kalorijski kalkulator</h1>
   </div>
+
+  <img class="hero" src="images/illustration.png" alt="fitness">
 
   <label>Spol</label>
   <select id="gender">
