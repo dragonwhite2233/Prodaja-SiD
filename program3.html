@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalorijski kalkulator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #43cea2, #185a9d);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      background: #ffffff;
+      width: 360px;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .logo span {
+      display: inline-block;
+      background: #43cea2;
+      color: white;
+      font-size: 22px;
+      font-weight: bold;
+      padding: 12px 18px;
+      border-radius: 50%;
+    }
+
+    .logo h1 {
+      margin: 8px 0 0;
+      font-size: 20px;
+      color: #333;
+    }
+
+    label {
+      font-size: 14px;
+      color: #555;
+      margin-top: 12px;
+      display: block;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #185a9d;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #144a82;
+    }
+
+    .result {
+      margin-top: 15px;
+      background: #f4f6f8;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      white-space: pre-line;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: #777;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo">
+    <span>🔥</span>
+    <h1>Kalorijski kalkulator</h1>
+  </div>
+
+  <label>Spol</label>
+  <select id="gender">
+    <option value="male">Muško</option>
+    <option value="female">Žensko</option>
+  </select>
+
+  <label>Godine</label>
+  <input type="number" id="age" placeholder="npr. 25">
+
+  <label>Visina (cm)</label>
+  <input type="number" id="height" placeholder="npr. 180">
+
+  <label>Težina (kg)</label>
+  <input type="number" id="weight" placeholder="npr. 80">
+
+  <label>Nivo aktivnosti</label>
+  <select id="activity">
+    <option value="1.2">Sjedilački</option>
+    <option value="1.375">Lagana</option>
+    <option value="1.55">Umjerena</option>
+    <option value="1.725">Visoka</option>
+  </select>
+
+  <button onclick="calculateCalories()">Izračunaj kalorije</button>
+
+  <div class="result" id="result"></div>
+
+  <div class="footer">
+    © 2026 Kalorijski kalkulator
+  </div>
+</div>
+
+<script>
+function calculateCalories() {
+  var gender = document.getElementById("gender").value;
+  var age = Number(document.getElementById("age").value);
+  var height = Number(document.getElementById("height").value);
+  var weight = Number(document.getElementById("weight").value);
+  var activity = Number(document.getElementById("activity").value);
+
+  if (!age || !height || !weight) {
+    document.getElementById("result").innerText =
+      "Molim unesi sve podatke.";
+    return;
+  }
+
+  var bmr;
+  if (gender === "male") {
+    bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+  } else {
+    bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+  }
+
+  var tdee = Math.round(bmr * activity);
+
+  document.getElementById("result").innerText =
+    "🔥 Održavanje: " + tdee + " kcal\n" +
+    "⬇️ Mršavljenje: " + (tdee - 500) + " kcal\n" +
+    "⬆️ Masa: " + (tdee + 300) + " kcal";
+}
+</script>
+
+</body>
+</html>
