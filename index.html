@@ -5,44 +5,141 @@
   <title>Kalorijski kalkulator</title>
 
   <style>
-    * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
-    body { margin: 0; min-height: 100vh; background-image: url("images/bg.jpg"); background-size: cover; background-position: center; display: flex; justify-content: center; align-items: center; position: relative; }
-    body::before { content: ""; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: -1; }
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-    .page { display: none; width: 380px; padding: 25px; border-radius: 18px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); background: rgba(255,255,255,0.95); text-align: center; animation: fadeIn 0.6s ease; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background-image: url("images/bg.jpg");
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: -1;
+    }
 
-    .logo span { display: inline-block; background: #43cea2; color: white; font-size: 22px; font-weight: bold; padding: 12px 18px; border-radius: 50%; }
-    .logo h1 { margin: 10px 0 0; font-size: 22px; color: #333; }
-    .hero { width: 100%; margin: 12px 0 15px; border-radius: 12px; }
+    .page {
+      display: none;
+      width: 380px;
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      background: rgba(255,255,255,0.95);
+      text-align: center;
+      animation: fadeIn 0.6s ease;
+    }
 
-    label { font-size: 14px; color: #555; margin-top: 10px; display: block; }
-    input, select { width: 100%; padding: 10px; margin-top: 6px; border-radius: 8px; border: 1px solid #ccc; font-size: 14px; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-    button { width: 100%; margin-top: 18px; padding: 12px; border: none; border-radius: 12px; background: #185a9d; color: white; font-size: 16px; cursor: pointer; transition: background 0.3s; }
-    button:hover { background: #144a82; }
+    .logo span {
+      display: inline-block;
+      background: #43cea2;
+      color: white;
+      font-size: 22px;
+      font-weight: bold;
+      padding: 12px 18px;
+      border-radius: 50%;
+    }
 
-    .result { margin-top: 15px; background: #f4f6f8; padding: 12px; border-radius: 10px; font-size: 14px; white-space: pre-line; animation: fadeIn 0.4s ease; }
+    .logo h1 {
+      margin: 10px 0 0;
+      font-size: 22px;
+      color: #333;
+    }
 
-    .footer { text-align: center; font-size: 12px; color: #777; margin-top: 15px; }
+    .hero {
+      width: 100%;
+      margin: 12px 0 15px;
+      border-radius: 12px;
+    }
+
+    label {
+      font-size: 14px;
+      color: #555;
+      margin-top: 10px;
+      display: block;
+      text-align: left;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: #185a9d;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #144a82;
+    }
+
+    .result {
+      margin-top: 15px;
+      background: #f4f6f8;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      white-space: pre-line;
+    }
+
+    .footer {
+      margin-top: 15px;
+      font-size: 12px;
+      color: #777;
+    }
   </style>
 </head>
 
 <body>
 
-<!-- Stranica 1: Landing / Logo -->
+<!-- LANDING -->
 <div class="page" id="landingPage" style="display:block;">
   <div class="logo">
     <span>🔥</span>
     <h1>Kalorijski kalkulator</h1>
   </div>
   <img class="hero" src="images/illustration.png" alt="fitness">
-  <button onclick="startCalculator()">Nastavi</button>
+  <button onclick="goMenu()">Nastavi</button>
 </div>
 
-<!-- Stranica 2: Kalkulator -->
+<!-- MENU -->
+<div class="page" id="menuPage">
+  <h2>Odaberi opciju</h2>
+  <button onclick="openFood()">🥗 Kalorije u hrani</button>
+  <button onclick="openPerson()">🧍‍♂️ Kalorije za osobu</button>
+</div>
+
+<!-- PERSON CALCULATOR -->
 <div class="page" id="calculatorPage">
+  <h2>Kalorije za osobu</h2>
+
   <label>Spol</label>
   <select id="gender">
     <option value="male">Muško</option>
@@ -66,19 +163,54 @@
     <option value="1.725">Visoka</option>
   </select>
 
-  <button onclick="calculateCalories()">Izračunaj kalorije</button>
+  <button onclick="calculateCalories()">Izračunaj</button>
 
   <div class="result" id="result"></div>
 
-  <div class="footer">
-    © 2026 Kalorijski kalkulator
-  </div>
+  <button onclick="goMenu()">⬅ Nazad</button>
+</div>
+
+<!-- FOOD CALCULATOR -->
+<div class="page" id="foodPage">
+  <h2>Kalorije u hrani</h2>
+
+  <label>Namirnica</label>
+  <select id="food">
+    <option value="89">Banana (89 kcal / 100g)</option>
+    <option value="52">Jabuka (52 kcal / 100g)</option>
+    <option value="155">Jaje (155 kcal / 100g)</option>
+    <option value="165">Piletina (165 kcal / 100g)</option>
+    <option value="130">Riža (130 kcal / 100g)</option>
+  </select>
+
+  <label>Količina (g)</label>
+  <input type="number" id="grams" placeholder="npr. 150">
+
+  <button onclick="calculateFood()">Izračunaj</button>
+
+  <div class="result" id="foodResult"></div>
+
+  <button onclick="goMenu()">⬅ Nazad</button>
 </div>
 
 <script>
-function startCalculator() {
-  document.getElementById("landingPage").style.display = "none";
+function hideAll() {
+  document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+}
+
+function goMenu() {
+  hideAll();
+  document.getElementById("menuPage").style.display = "block";
+}
+
+function openPerson() {
+  hideAll();
   document.getElementById("calculatorPage").style.display = "block";
+}
+
+function openFood() {
+  hideAll();
+  document.getElementById("foodPage").style.display = "block";
 }
 
 function calculateCalories() {
@@ -93,13 +225,30 @@ function calculateCalories() {
     return;
   }
 
-  var bmr = (gender === "male") ? (10*weight + 6.25*height - 5*age + 5) : (10*weight + 6.25*height - 5*age - 161);
+  var bmr = (gender === "male")
+    ? (10*weight + 6.25*height - 5*age + 5)
+    : (10*weight + 6.25*height - 5*age - 161);
+
   var tdee = Math.round(bmr * activity);
 
   document.getElementById("result").innerText =
     "🔥 Održavanje: " + tdee + " kcal\n" +
     "⬇️ Mršavljenje: " + (tdee - 500) + " kcal\n" +
     "⬆️ Masa: " + (tdee + 300) + " kcal";
+}
+
+function calculateFood() {
+  var kcalPer100 = Number(document.getElementById("food").value);
+  var grams = Number(document.getElementById("grams").value);
+
+  if (!grams) {
+    document.getElementById("foodResult").innerText = "Unesi količinu.";
+    return;
+  }
+
+  var total = Math.round((kcalPer100 / 100) * grams);
+  document.getElementById("foodResult").innerText =
+    "🔥 Ukupno kalorija: " + total + " kcal";
 }
 </script>
 
