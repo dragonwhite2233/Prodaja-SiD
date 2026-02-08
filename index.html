@@ -8,7 +8,7 @@
 body {
   margin: 0;
   height: 100vh;
-  background: radial-gradient(circle at bottom, #2c3e50, #0b1d2a);
+  background: radial-gradient(circle at bottom, #1e3c72, #0b1d2a);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,10 +23,6 @@ body {
   text-align: center;
 }
 
-h2 {
-  margin: 0;
-}
-
 button {
   margin-top: 10px;
   padding: 12px 26px;
@@ -36,10 +32,6 @@ button {
   color: white;
   font-size: 16px;
   cursor: pointer;
-}
-
-button:hover {
-  filter: brightness(1.05);
 }
 
 canvas {
@@ -63,80 +55,96 @@ canvas {
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
+let branches = [];
 let hearts = [];
-let growing = false;
 
+/* ===== ENTRY ===== */
 function createTree() {
+  branches = [];
   hearts = [];
-  growing = true;
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  requestAnimationFrame(() => drawBranch(
+
+  generateBranch(
     canvas.width / 2,
-    canvas.height * 0.75,
+    canvas.height * 0.8,
     -90,
-    90,
-    10
-  ));
+    110,
+    12
+  );
+
+  draw();
 }
 
-/* ===== FRAKTALNO STABLO ===== */
-function drawBranch(x, y, angle, length, width) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(angle * Math.PI / 180);
+/* ===== GENERATE TREE STRUCTURE ===== */
+function generateBranch(x, y, angle, length, width) {
+  branches.push({ x, y, angle, length, width });
 
-  ctx.strokeStyle = "#5a3e2b";
-  ctx.lineWidth = width;
-  ctx.lineCap = "round";
+  const endX = x + Math.cos(angle * Math.PI / 180) * length;
+  const endY = y + Math.sin(angle * Math.PI / 180) * length;
 
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.lineTo(0, length);
-  ctx.stroke();
-
-  const newX = 0;
-  const newY = length;
-
-  ctx.restore();
-
-  if (length < 20) {
-    if (Math.random() > 0.4) {
-      hearts.push({
-        x: x + Math.cos(angle * Math.PI / 180) * length,
-        y: y + Math.sin(angle * Math.PI / 180) * length,
-        size: Math.random() * 6 + 6,
-        pulse: Math.random() * Math.PI * 2
-      });
-    }
+  if (length < 25) {
+    hearts.push({
+      x: endX,
+      y: endY,
+      size: 6 + Math.random() * 5,
+      pulse: Math.random() * Math.PI * 2
+    });
     return;
   }
 
-  setTimeout(() => {
-    drawBranch(
-      x + Math.cos(angle * Math.PI / 180) * length,
-      y + Math.sin(angle * Math.PI / 180) * length,
-      angle - (15 + Math.random() * 10),
-      length * 0.75,
-      width * 0.7
-    );
-    drawBranch(
-      x + Math.cos(angle * Math.PI / 180) * length,
-      y + Math.sin(angle * Math.PI / 180) * length,
-      angle + (15 + Math.random() * 10),
-      length * 0.75,
-      width * 0.7
-    );
-  }, 60);
+  const newLength = length * 0.72;
+  const newWidth = width * 0.7;
+
+  generateBranch(
+    endX,
+    endY,
+    angle - (15 + Math.random() * 10),
+    newLength,
+    newWidth
+  );
+
+  generateBranch(
+    endX,
+    endY,
+    angle + (15 + Math.random() * 10),
+    newLength,
+    newWidth
+  );
 }
 
-/* ===== HEARTS ===== */
-function drawHearts() {
+/* ===== DRAW ===== */
+function draw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // ground
+  ctx.fillStyle = "#2ecc71";
+  ctx.fillRect(0, canvas.height * 0.6, canvas.width, canvas.height);
+
+  // branches
+  branches.forEach(b => {
+    ctx.strokeStyle = "#5a3e2b";
+    ctx.lineWidth = b.width;
+    ctx.lineCap = "round";
+
+    ctx.beginPath();
+    ctx.moveTo(b.x, b.y);
+    ctx.lineTo(
+      b.x + Math.cos(b.angle * Math.PI / 180) * b.length,
+      b.y + Math.sin(b.angle * Math.PI / 180) * b.length
+    );
+    ctx.stroke();
+  });
+
+  // hearts
   hearts.forEach(h => {
     h.pulse += 0.05;
-    drawHeart(h.x, h.y, h.size + Math.sin(h.pulse) * 1.5);
+    drawHeart(h.x, h.y, h.size + Math.sin(h.pulse));
   });
+
+  requestAnimationFrame(draw);
 }
 
+/* ===== HEART ===== */
 function drawHeart(x, y, size) {
   ctx.save();
   ctx.translate(x, y);
@@ -151,20 +159,6 @@ function drawHeart(x, y, size) {
 
   ctx.restore();
 }
-
-/* ===== LOOP ===== */
-function loop() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  // redraw ground
-  ctx.fillStyle = "#2ecc71";
-  ctx.fillRect(0, canvas.height * 0.6, canvas.width, canvas.height);
-
-  drawHearts();
-  requestAnimationFrame(loop);
-}
-
-loop();
 </script>
 
 </body>
