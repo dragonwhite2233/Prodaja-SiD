@@ -2,7 +2,7 @@
 <html lang="hr">
 <head>
 <meta charset="UTF-8">
-<title>Kalorijski kalkulator + Igrica</title>
+<title>Kalorijski kalkulator + Dino igrica</title>
 
 <script src="https://unpkg.com/@ericblade/quagga2/dist/quagga.js"></script>
 
@@ -157,6 +157,7 @@ canvas {
 </div>
 
 <script>
+/* ===== NAVIGATION ===== */
 function hideAll() {
   document.querySelectorAll(".page").forEach(p => p.style.display = "none");
 }
@@ -166,29 +167,29 @@ function goMenu() {
   document.getElementById("menuPage").style.display = "block";
 }
 
-/* PERSON */
+/* ===== PERSON ===== */
 function openPerson() {
   hideAll();
   document.getElementById("personPage").style.display = "block";
 }
 
 function calculatePerson() {
-  let g = gender.value;
-  let a = +age.value;
-  let h = +height.value;
-  let w = +weight.value;
-  let act = +activity.value;
+  const g = gender.value;
+  const a = +age.value;
+  const h = +height.value;
+  const w = +weight.value;
+  const act = +activity.value;
 
   if (!a || !h || !w) {
     personResult.innerText = "Unesi sve podatke.";
     return;
   }
 
-  let bmr = g === "male"
+  const bmr = g === "male"
     ? 10*w + 6.25*h - 5*a + 5
     : 10*w + 6.25*h - 5*a - 161;
 
-  let tdee = Math.round(bmr * act);
+  const tdee = Math.round(bmr * act);
 
   personResult.innerText =
     "🔥 Održavanje: " + tdee + " kcal\n" +
@@ -196,7 +197,7 @@ function calculatePerson() {
     "⬆️ Masa: " + (tdee + 300) + " kcal";
 }
 
-/* FOOD */
+/* ===== FOOD ===== */
 function openFood() {
   hideAll();
   document.getElementById("foodPage").style.display = "block";
@@ -206,10 +207,14 @@ let scanned = false;
 
 function startScanner() {
   scanned = false;
-  document.getElementById("scanner").innerHTML = "";
+  scanner.innerHTML = "";
 
   Quagga.init({
-    inputStream: { type: "LiveStream", target: "#scanner", constraints: { facingMode: "environment" }},
+    inputStream: {
+      type: "LiveStream",
+      target: scanner,
+      constraints: { facingMode: "environment" }
+    },
     decoder: { readers: ["ean_reader","ean_8_reader","upc_reader"] }
   }, err => {
     if (err) return alert("Greška s kamerom");
@@ -233,27 +238,29 @@ function fetchProduct(code) {
         return;
       }
 
-      let p = d.product;
-      let kcal = p.nutriments["energy-kcal_100g"] ||
-                 (p.nutriments["energy_100g"] / 4.184);
+      const p = d.product;
+      const kcal = p.nutriments["energy-kcal_100g"] ||
+                  (p.nutriments["energy_100g"] / 4.184);
 
-      productName.value = p.product_name || "Nepoznat";
+      productName.value = p.product_name || "Nepoznat proizvod";
       kcal100.value = kcal ? Math.round(kcal) : "";
     });
 }
 
 function calculateFood() {
-  let kcal = +kcal100.value;
-  let g = +grams.value;
+  const kcal = +kcal100.value;
+  const g = +grams.value;
+
   if (!kcal || !g) {
     foodResult.innerText = "Unesi količinu.";
     return;
   }
+
   foodResult.innerText =
     "🔥 Ukupno kalorija: " + Math.round(kcal / 100 * g) + " kcal";
 }
 
-/* GAME */
+/* ===== GAME ===== */
 let canvas, ctx, dino, obstacle, gravity = 0.6, score, playing;
 
 function openGame() {
@@ -265,40 +272,54 @@ function openGame() {
 function startGame() {
   canvas = document.getElementById("game");
   ctx = canvas.getContext("2d");
+
   dino = { x: 40, y: 150, w: 20, h: 20, vy: 0 };
   obstacle = { x: 320, y: 160, w: 15, h: 30 };
   score = 0;
   playing = true;
+  gameResult.innerText = "SPACE ili tap za skok";
+
   requestAnimationFrame(loop);
 }
 
 function loop() {
   if (!playing) return;
-  ctx.clearRect(0,0,320,200);
 
-  ctx.fillRect(0,180,320,2);
+  ctx.clearRect(0, 0, 320, 200);
+
+  ctx.fillStyle = "#333";
+  ctx.fillRect(0, 180, 320, 2);
 
   dino.vy += gravity;
   dino.y += dino.vy;
   if (dino.y > 150) { dino.y = 150; dino.vy = 0; }
+
   ctx.fillStyle = "#43cea2";
-  ctx.fillRect(dino.x,dino.y,dino.w,dino.h);
+  ctx.fillRect(dino.x, dino.y, dino.w, dino.h);
 
   obstacle.x -= 4;
-  if (obstacle.x < -20) { obstacle.x = 320; score++; }
-  ctx.fillStyle = "#e74c3c";
-  ctx.fillRect(obstacle.x,obstacle.y,obstacle.w,obstacle.h);
+  if (obstacle.x < -20) {
+    obstacle.x = 320;
+    score++;
+  }
 
-  if (dino.x < obstacle.x + obstacle.w &&
-      dino.x + dino.w > obstacle.x &&
-      dino.y < obstacle.y + obstacle.h &&
-      dino.y + dino.h > obstacle.y) {
+  ctx.fillStyle = "#e74c3c";
+  ctx.fillRect(obstacle.x, obstacle.y, obstacle.w, obstacle.h);
+
+  if (
+    dino.x < obstacle.x + obstacle.w &&
+    dino.x + dino.w > obstacle.x &&
+    dino.y < obstacle.y + obstacle.h &&
+    dino.y + dino.h > obstacle.y
+  ) {
     playing = false;
     gameResult.innerText = "💥 Game Over | Score: " + score;
+    return;
   }
 
   ctx.fillStyle = "#000";
   ctx.fillText("Score: " + score, 10, 20);
+
   requestAnimationFrame(loop);
 }
 
@@ -306,7 +327,10 @@ function jump() {
   if (dino.y >= 150) dino.vy = -10;
 }
 
-document.addEventListener("keydown", e => e.code==="Space" && jump());
+document.addEventListener("keydown", e => {
+  if (e.code === "Space") jump();
+});
+
 document.getElementById("game").addEventListener("click", jump);
 </script>
 
